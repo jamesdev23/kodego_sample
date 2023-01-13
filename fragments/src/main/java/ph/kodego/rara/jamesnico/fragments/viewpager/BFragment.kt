@@ -1,16 +1,16 @@
-package ph.kodego.rara.jamesnico.fragments
+package ph.kodego.rara.jamesnico.fragments.viewpager
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import ph.kodego.rara.jamesnico.fragments.databinding.FragmentFirstBinding
-import ph.kodego.rara.jamesnico.fragments.databinding.FragmentSecondBinding
+import ph.kodego.rara.jamesnico.fragments.databinding.FragmentABinding
+import ph.kodego.rara.jamesnico.fragments.databinding.FragmentBBinding
 
-class SecondFragment : Fragment() {
+class BFragment : Fragment() {
 
-    private var _binding: FragmentSecondBinding? = null
+    private var _binding: FragmentBBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +22,7 @@ class SecondFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentSecondBinding.inflate(inflater, container, false)
+        _binding = FragmentBBinding.inflate(inflater, container, false)
         return binding.root
     }
 
