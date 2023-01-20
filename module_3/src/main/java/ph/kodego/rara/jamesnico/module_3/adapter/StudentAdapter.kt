@@ -63,6 +63,7 @@ class StudentAdapter (var students: ArrayList<Student>)
 
                 removeStudent(adapterPosition)
             }
+            itemBinding.profilePicture.setImageResource(student.img)
         }
 
         override fun onClick(v: View?) {
