@@ -1,15 +1,18 @@
 package ph.kodego.rara.jamesnico.module_3.adapter
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.view.menu.MenuView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import ph.kodego.rara.jamesnico.module_3.R
 import ph.kodego.rara.jamesnico.module_3.databinding.StudentItemBinding
 import ph.kodego.rara.jamesnico.module_3.model.Student
 
-class StudentAdapter (var students: ArrayList<Student>)
+class StudentAdapter (var students: ArrayList<Student>, var activity: Activity)
     : RecyclerView.Adapter<StudentAdapter.StudentViewHolder>(){
 
     fun addStudent(student: Student){
@@ -20,6 +23,12 @@ class StudentAdapter (var students: ArrayList<Student>)
     fun removeStudent(position: Int){
         students.removeAt(position)
         notifyItemRemoved(position)
+    }
+
+    fun updateStudents(newStudents: ArrayList<Student>){
+        students.clear()
+        students.addAll(newStudents)
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {
@@ -72,8 +81,47 @@ class StudentAdapter (var students: ArrayList<Student>)
                 Snackbar.LENGTH_SHORT
             ).show()
 
-            removeStudent(adapterPosition)
+//            removeStudent(adapterPosition)
+//            showAlertDialogue()
+            showCustomDialogue()
         }
+
+        fun showCustomDialogue() {
+            val builder = AlertDialog.Builder(activity)
+            val inflater = LayoutInflater.from(activity)
+
+            val dialogView = inflater.inflate(R.layout.dialogue_update_student, null)
+            builder.setView(dialogView)
+                .setPositiveButton("Update") { dialog, id ->
+                    // Handle Update button click
+                }
+                .setNegativeButton("Cancel") { dialog, id ->
+                    // Handle Cancel button click
+                }
+            val alertDialog = builder.create()
+            alertDialog.show()
+        }
+
+        fun showAlertDialogue(){
+            val alertDialog = AlertDialog.Builder(activity)
+
+            alertDialog.apply {
+                setIcon(R.drawable.icon_1)
+                setTitle("Student Background")
+                setMessage("Student Record")
+//                setPositiveButton("Positive") { _, _ ->
+//                    toast("clicked positive button")
+//                }
+//                setNegativeButton("Negative") { _, _ ->
+//                    toast("clicked negative button")
+//                }
+                setNeutralButton("Close") { _, _ ->
+                    toast("clicked close button")
+                }
+            }.create().show()
+        }
+
+        private fun toast(text:String) = Toast.makeText(activity.applicationContext, text, Toast.LENGTH_SHORT).show()
 
 
     }

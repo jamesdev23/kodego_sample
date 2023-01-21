@@ -27,16 +27,25 @@ class MainActivity : AppCompatActivity() {
         students = dao.getStudents()
 //        init()
 
-        studentAdapter = StudentAdapter(students)
+        studentAdapter = StudentAdapter(students, this)
         binding.list.layoutManager = LinearLayoutManager(applicationContext)
 //        binding.list.layoutManager = GridLayoutManager(applicationContext,2)
         binding.list.adapter = studentAdapter
 
         binding.addStudentButton.setOnClickListener {
-            studentAdapter.addStudent(Student(
-                    binding.studentFirstname.text.toString(),
-                    binding.studentLastname.text.toString(),
-                    R.drawable.placeholder))
+            val student = Student()
+
+            student.firstName = binding.studentFirstname.text.toString()
+            student.lastName = binding.studentLastname.text.toString()
+
+            dao.addStudent(student)
+            students = dao.getStudents()
+            studentAdapter.updateStudents(students)
+
+//            studentAdapter.addStudent(Student(
+//                    binding.studentFirstname.text.toString(),
+//                    binding.studentLastname.text.toString(),
+//                    R.drawable.placeholder))
         }
 
         var swipeCallback = SwipeCallback(0,ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)

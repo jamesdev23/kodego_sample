@@ -30,7 +30,9 @@ class StudentDAOSQLImpl(var context: Context): StudentDAO{
 
         val selectQuery = "SELECT ${DatabaseHandler.studentLastName}, " +
                 "${DatabaseHandler.studentFirstName}, " +
-                "${DatabaseHandler.studentId} " +
+                "${DatabaseHandler.studentId}, " +
+                "${DatabaseHandler.yearstarted}, " +
+                "${DatabaseHandler.course} " +
                 "FROM ${DatabaseHandler.tableStudents}"
 
         var databaseHandler:DatabaseHandler = DatabaseHandler(context)
