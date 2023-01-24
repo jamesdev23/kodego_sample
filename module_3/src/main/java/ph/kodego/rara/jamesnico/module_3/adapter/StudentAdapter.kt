@@ -2,6 +2,8 @@ package ph.kodego.rara.jamesnico.module_3.adapter
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.Dialog
+import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +11,9 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import ph.kodego.rara.jamesnico.module_3.R
+import ph.kodego.rara.jamesnico.module_3.dao.StudentDAO
+import ph.kodego.rara.jamesnico.module_3.dao.StudentDAOSQLImpl
+import ph.kodego.rara.jamesnico.module_3.databinding.DialogueUpdateStudentBinding
 import ph.kodego.rara.jamesnico.module_3.databinding.StudentItemBinding
 import ph.kodego.rara.jamesnico.module_3.model.Student
 
@@ -86,20 +91,39 @@ class StudentAdapter (var students: ArrayList<Student>, var activity: Activity)
             showCustomDialogue()
         }
 
-        fun showCustomDialogue() {
-            val builder = AlertDialog.Builder(activity)
-            val inflater = LayoutInflater.from(activity)
+        fun showCustomDialogue(): AlertDialog {
+            return activity?.let {
+                val builder = AlertDialog.Builder(it)
+                val dialogUpdateStudentBinding: DialogueUpdateStudentBinding =
+                    DialogueUpdateStudentBinding.inflate(it.layoutInflater)
 
-            val dialogView = inflater.inflate(R.layout.dialogue_update_student, null)
-            builder.setView(dialogView)
-                .setPositiveButton("Update") { dialog, id ->
-                    // Handle Update button click
+                with(dialogUpdateStudentBinding) {
+                    studentLastnameUpdate.setText(student.lastName)
+                    studentFirstnameUpdate.setText(student.firstName)
                 }
-                .setNegativeButton("Cancel") { dialog, id ->
-                    // Handle Cancel button click
+
+                with(builder) {
+                    setPositiveButton("Update",
+                        DialogInterface.OnClickListener { dialog, id ->
+                            val dao: StudentDAO = StudentDAOSQLImpl(activity.applicationContext)
+                            dao.updateStudent(student.id, student)
+
+                            student.lastName =
+                                dialogUpdateStudentBinding.studentLastnameUpdate.text.toString()
+                            student.firstName =
+                                dialogUpdateStudentBinding.studentFirstnameUpdate.text.toString()
+
+                            updateStudents(dao.getStudents())
+                            notifyItemChanged(adapterPosition)
+                        })
+                    setNegativeButton("Cancel",
+                        DialogInterface.OnClickListener { dialog, id ->
+                            // do something
+                        })
+                    setView(dialogUpdateStudentBinding.root)
+                    create()
                 }
-            val alertDialog = builder.create()
-            alertDialog.show()
+            } ?: throw IllegalStateException("Activity cannot be null")
         }
 
         fun showAlertDialogue(){
