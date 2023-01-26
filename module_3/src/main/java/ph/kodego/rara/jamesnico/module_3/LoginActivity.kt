@@ -6,11 +6,13 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.snackbar.Snackbar
 import ph.kodego.rara.jamesnico.module_3.databinding.ActivityLoginBinding
+import ph.kodego.rara.jamesnico.module_3.utility.PreferenceUtility
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var username: String
     private lateinit var password: String
+    private lateinit var preferenceUtility: PreferenceUtility
 
     private val launchRegister = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -27,10 +29,17 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        preferenceUtility = PreferenceUtility(applicationContext)
+        binding.usernametext.setText(preferenceUtility.getStringPreferences("username"))
+        binding.passwordtext.setText(preferenceUtility.getStringPreferences("password"))
+
         binding.btnSubmit.setOnClickListener {
 
             username = binding.usernametext.text.toString()
             password = binding.passwordtext.text.toString()
+
+            preferenceUtility.saveStringPreferences("username", binding.usernametext.text.toString())
+            preferenceUtility.saveStringPreferences("password", binding.passwordtext.text.toString())
 
 
             var goToHome = Intent(this, MainActivity::class.java)
@@ -51,6 +60,8 @@ class LoginActivity : AppCompatActivity() {
             var goToRegister = Intent(this, RegisterActivity::class.java)
             launchRegister.launch(goToRegister)
         }
+
+
     }
 
     override fun onBackPressed() {

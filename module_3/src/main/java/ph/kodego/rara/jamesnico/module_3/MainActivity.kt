@@ -59,7 +59,9 @@ class MainActivity : AppCompatActivity() {
         binding.searchStudent.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextChange(newText: String?): Boolean {
 //                Toast.makeText(this@MainActivity,"$newText", Toast.LENGTH_SHORT).show()
-                studentAdapter.filter.filter(newText)
+//                studentAdapter.filter.filter(newText)
+                students = dao.searchStudentsByLastName(newText!!)
+                studentAdapter.updateStudents(students)
                 return false
             }
 

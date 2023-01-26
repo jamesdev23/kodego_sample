@@ -12,6 +12,7 @@ interface StudentDAO {
     fun getStudents() : ArrayList<Student>
     fun updateStudent(studentId: Int, student: Student)
     fun deleteStudent(studentId: Int)
+    fun searchStudentsByLastName(searchString: String) : ArrayList<Student>
 }
 
 class StudentDAOSQLImpl(var context: Context): StudentDAO{
@@ -89,5 +90,48 @@ class StudentDAOSQLImpl(var context: Context): StudentDAO{
         "${DatabaseHandler.studentId} = ?",
             values)
         db.close()
+    }
+
+    override fun searchStudentsByLastName(searchString: String): ArrayList<Student> {
+        val studentList: ArrayList<Student> = ArrayList()
+
+        val columns = arrayOf(DatabaseHandler.studentFirstName,
+            DatabaseHandler.studentLastName,
+            DatabaseHandler.studentId,
+            DatabaseHandler.yearstarted,
+            DatabaseHandler.course
+            )
+
+        var databaseHandler:DatabaseHandler = DatabaseHandler(context)
+        val db = databaseHandler.readableDatabase
+
+        var cursor: Cursor? = null
+
+        try{
+            cursor = db.query(DatabaseHandler.tableStudents,
+            columns,
+                "${DatabaseHandler.studentLastName} like '%${searchString}'",
+                null,
+                null,
+                null,
+                DatabaseHandler.studentLastName
+            )
+        }catch (e:SQLiteException){
+            db.close()
+            return ArrayList()
+        }
+
+        val student = Student()
+        if(cursor.moveToFirst()) {
+            do {
+                student.firstName = cursor.getString(0)
+                student.lastName = cursor.getString(1)
+                student.id = cursor.getInt(2)
+                studentList.add(student)
+            }while(cursor.moveToNext())
+        }
+        cursor?.close()
+        db.close()
+        return studentList
     }
 }
