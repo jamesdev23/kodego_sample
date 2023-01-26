@@ -7,10 +7,13 @@ import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import ph.kodego.rara.jamesnico.module_3.R
+import ph.kodego.rara.jamesnico.module_3.dao.DatabaseHandler.Companion.studentId
 import ph.kodego.rara.jamesnico.module_3.dao.StudentDAO
 import ph.kodego.rara.jamesnico.module_3.dao.StudentDAOSQLImpl
 import ph.kodego.rara.jamesnico.module_3.databinding.DialogueUpdateStudentBinding
@@ -18,7 +21,12 @@ import ph.kodego.rara.jamesnico.module_3.databinding.StudentItemBinding
 import ph.kodego.rara.jamesnico.module_3.model.Student
 
 class StudentAdapter (var students: ArrayList<Student>, var activity: Activity)
-    : RecyclerView.Adapter<StudentAdapter.StudentViewHolder>(){
+    : RecyclerView.Adapter<StudentAdapter.StudentViewHolder>(),
+    Filterable{
+
+    var filteredStudents:List<Student> = ArrayList()
+    val all_records = ArrayList<Student>()
+
 
     fun addStudent(student: Student){
         students.add(0,student)
@@ -36,6 +44,13 @@ class StudentAdapter (var students: ArrayList<Student>, var activity: Activity)
         notifyDataSetChanged()
     }
 
+//    fun filterStudent(searchString: String){
+//        var newSet = students.filter {it.lastName.contains(searchString)}
+//        students.clear()
+//        students.addAll(newSet)
+//        notifyDataSetChanged()
+//    }
+
     override fun getItemCount(): Int {
         return students.size
     }
@@ -44,6 +59,10 @@ class StudentAdapter (var students: ArrayList<Student>, var activity: Activity)
         parent: ViewGroup,
         viewType: Int
     ): StudentAdapter.StudentViewHolder {
+
+        //new
+        all_records.clear()
+        all_records.addAll(students)
         val itemBinding = StudentItemBinding
             .inflate(
                 LayoutInflater.from(parent.context),
@@ -75,6 +94,8 @@ class StudentAdapter (var students: ArrayList<Student>, var activity: Activity)
                     Snackbar.LENGTH_SHORT
                 ).show()
 
+                var dao: StudentDAO = StudentDAOSQLImpl(activity.applicationContext)
+                dao.deleteStudent(student.id)
                 removeStudent(adapterPosition)
             }
             itemBinding.profilePicture.setImageResource(student.img)
@@ -106,13 +127,13 @@ class StudentAdapter (var students: ArrayList<Student>, var activity: Activity)
                     setPositiveButton("Update",
                         DialogInterface.OnClickListener { dialog, id ->
                             val dao: StudentDAO = StudentDAOSQLImpl(activity.applicationContext)
+                            val updateFirstName = dialogUpdateStudentBinding.studentFirstnameUpdate.text.toString()
+                            val updateLastName = dialogUpdateStudentBinding.studentLastnameUpdate.text.toString()
+
+                            student.firstName = updateFirstName
+                            student.lastName = updateLastName
+
                             dao.updateStudent(student.id, student)
-
-                            student.lastName =
-                                dialogUpdateStudentBinding.studentLastnameUpdate.text.toString()
-                            student.firstName =
-                                dialogUpdateStudentBinding.studentFirstnameUpdate.text.toString()
-
                             updateStudents(dao.getStudents())
                             notifyItemChanged(adapterPosition)
                         })
@@ -122,6 +143,7 @@ class StudentAdapter (var students: ArrayList<Student>, var activity: Activity)
                         })
                     setView(dialogUpdateStudentBinding.root)
                     create()
+                    show()
                 }
             } ?: throw IllegalStateException("Activity cannot be null")
         }
@@ -148,5 +170,29 @@ class StudentAdapter (var students: ArrayList<Student>, var activity: Activity)
         private fun toast(text:String) = Toast.makeText(activity.applicationContext, text, Toast.LENGTH_SHORT).show()
 
 
+    }
+
+    override fun getFilter(): Filter {
+        return object: Filter(){
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val searchString = constraint.toString()
+
+                if(searchString.trim().length == 0){
+                    all_records
+                }else{
+                    filteredStudents = students.filter {it.lastName.contains(searchString, ignoreCase = true)}
+                }
+                return FilterResults().apply { values = filteredStudents }
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                filteredStudents = if(results?.values == null){
+                    all_records
+                }else{
+                    results.values as ArrayList<Student>
+                }
+                notifyDataSetChanged()
+            }
+        }
     }
 }

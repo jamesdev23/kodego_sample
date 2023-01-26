@@ -2,6 +2,8 @@ package ph.kodego.rara.jamesnico.module_3
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import ph.kodego.rara.jamesnico.module_3.adapter.StudentAdapter
@@ -53,6 +55,21 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper = ItemTouchHelper(swipeCallback)
         itemTouchHelper.attachToRecyclerView(binding.list)
 
+        //search
+        binding.searchStudent.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextChange(newText: String?): Boolean {
+//                Toast.makeText(this@MainActivity,"$newText", Toast.LENGTH_SHORT).show()
+                studentAdapter.filter.filter(newText)
+                return false
+            }
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+//                Toast.makeText(this@MainActivity,"Search: $query", Toast.LENGTH_SHORT).show()
+                studentAdapter.filter.filter(query)
+
+                return false
+            }
+        })
 
     }
 

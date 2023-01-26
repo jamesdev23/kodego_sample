@@ -65,7 +65,7 @@ class StudentDAOSQLImpl(var context: Context): StudentDAO{
     }
 
     override fun updateStudent(studentId: Int, student: Student) {
-        var databaseHandler = DatabaseHandler(context)
+        var databaseHandler:DatabaseHandler = DatabaseHandler(context)
         val db = databaseHandler.writableDatabase
 
         val contentValues = ContentValues()
