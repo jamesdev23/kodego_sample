@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity() {
         students = dao.getStudents()
 //        init()
 
+        var studentContacts = dao.getStudentsWithContacts()
+
         studentAdapter = StudentAdapter(students, this)
         binding.list.layoutManager = LinearLayoutManager(applicationContext)
 //        binding.list.layoutManager = GridLayoutManager(applicationContext,2)
@@ -43,6 +45,8 @@ class MainActivity : AppCompatActivity() {
             dao.addStudent(student)
             students = dao.getStudents()
             studentAdapter.updateStudents(students)
+
+
 
 //            studentAdapter.addStudent(Student(
 //                    binding.studentFirstname.text.toString(),
@@ -75,15 +79,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun init(){
-        students.add(Student("Dave", "Navor", R.drawable.icon_1))
-        students.add(Student("Victor", "Yu", R.drawable.icon_2))
-        students.add(Student("Jp", "Soriano", R.drawable.icon_1))
-        students.add(Student("Rene", "Palma", R.drawable.icon_2))
-        students.add(Student("Joni", "James", R.drawable.icon_1))
-        students.add(Student("Janreign", "Aragon", R.drawable.icon_2))
-        students.add(Student("John Rey", "Balais", R.drawable.icon_1))
-        students.add(Student("James Nico", "Rara", R.drawable.icon_2))
-        students.add(Student("Matthew", "Mottos", R.drawable.icon_1))
-    }
+//    fun init(){
+//        students.add(Student("Dave", "Navor", R.drawable.icon_1))
+//        students.add(Student("Victor", "Yu", R.drawable.icon_2))
+//        students.add(Student("Jp", "Soriano", R.drawable.icon_1))
+//        students.add(Student("Rene", "Palma", R.drawable.icon_2))
+//        students.add(Student("Joni", "James", R.drawable.icon_1))
+//        students.add(Student("Janreign", "Aragon", R.drawable.icon_2))
+//        students.add(Student("John Rey", "Balais", R.drawable.icon_1))
+//        students.add(Student("James Nico", "Rara", R.drawable.icon_2))
+//        students.add(Student("Matthew", "Mottos", R.drawable.icon_1))
+//    }
 }

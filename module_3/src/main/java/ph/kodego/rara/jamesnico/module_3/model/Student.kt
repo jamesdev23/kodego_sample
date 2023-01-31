@@ -8,3 +8,8 @@ class Student (var firstName:String = "Unknown", var lastName:String = "Unknown"
     var course:String = ""
     constructor(): this("","", R.drawable.placeholder) {}
 }
+
+class StudentContacts(){
+    var student:Student = Student()
+    var contacts = ArrayList<Contact>()
+}

@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteException
 import ph.kodego.rara.jamesnico.module_3.model.Student
+import ph.kodego.rara.jamesnico.module_3.model.StudentContacts
 
 interface StudentDAO {
     fun addStudent(student: Student)
@@ -13,6 +14,7 @@ interface StudentDAO {
     fun updateStudent(studentId: Int, student: Student)
     fun deleteStudent(studentId: Int)
     fun searchStudentsByLastName(searchString: String) : ArrayList<Student>
+    fun getStudentsWithContacts(): ArrayList<StudentContacts>
 }
 
 class StudentDAOSQLImpl(var context: Context): StudentDAO{
@@ -133,5 +135,53 @@ class StudentDAOSQLImpl(var context: Context): StudentDAO{
         cursor?.close()
         db.close()
         return studentList
+    }
+
+    override fun getStudentsWithContacts(): ArrayList<StudentContacts> {
+        val studentWithContactsList: ArrayList<StudentContacts> = ArrayList()
+
+        val selectQuery = "SELECT ${DatabaseHandler.studentLastName}, " +
+                "${DatabaseHandler.studentFirstName}, " +
+                "${DatabaseHandler.studentId}, " +
+                "${DatabaseHandler.yearstarted}, " +
+                "${DatabaseHandler.course} " +
+                "FROM ${DatabaseHandler.tableStudents}"
+
+        var databaseHandler:DatabaseHandler = DatabaseHandler(context)
+        val db = databaseHandler.readableDatabase
+        var cursor: Cursor? = null
+
+        try{
+            cursor = db.rawQuery(selectQuery,null)
+        } catch (e: SQLiteException) {
+            db.close()
+            return ArrayList()
+        }
+
+        var studentWithContact = StudentContacts()
+        if(cursor.moveToFirst()) {
+            do {
+                var student = Student()
+                studentWithContact = StudentContacts()
+                student.id = cursor.getInt(2)
+                student.lastName = cursor.getString(0)
+                student.firstName = cursor.getString(1)
+                studentWithContact.student = student
+                studentWithContactsList.add(studentWithContact)
+            }while(cursor.moveToNext())
+        }
+
+        db.close()
+
+        var contactDAO = ContactDAOSQLImpl(context)
+
+        for(studentWithContacts in studentWithContactsList){
+            studentWithContacts.contacts = contactDAO.getContacts(studentWithContacts.student.id)
+        }
+
+//        for (index in 0 until studentWithContactsList.size){
+//            studentWithContactsList[index].contacts = contactDAO.getContacts(studentWithContactsList[index].student.id)
+//        }
+        return studentWithContactsList
     }
 }
