@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteException
+import ph.kodego.rara.jamesnico.module_3.dao.DatabaseHandler.Companion.course
 import ph.kodego.rara.jamesnico.module_3.model.Student
 import ph.kodego.rara.jamesnico.module_3.model.StudentContacts
 
@@ -15,6 +16,7 @@ interface StudentDAO {
     fun deleteStudent(studentId: Int)
     fun searchStudentsByLastName(searchString: String) : ArrayList<Student>
     fun getStudentsWithContacts(): ArrayList<StudentContacts>
+    fun getStudentByLastNameAndFirstName(firstName:String, lastName:String): ArrayList<Student>
 }
 
 class StudentDAOSQLImpl(var context: Context): StudentDAO{
@@ -179,9 +181,53 @@ class StudentDAOSQLImpl(var context: Context): StudentDAO{
             studentWithContacts.contacts = contactDAO.getContacts(studentWithContacts.student.id)
         }
 
-//        for (index in 0 until studentWithContactsList.size){
-//            studentWithContactsList[index].contacts = contactDAO.getContacts(studentWithContactsList[index].student.id)
-//        }
+        for (index in 0 until studentWithContactsList.size){
+            studentWithContactsList[index].contacts = contactDAO.getContacts(studentWithContactsList[index].student.id)
+        }
         return studentWithContactsList
     }
+
+    override fun getStudentByLastNameAndFirstName(firstName: String, lastName: String): ArrayList<Student> {
+        val studentList: ArrayList<Student> = ArrayList()
+
+        val columns = arrayOf(DatabaseHandler.studentFirstName,
+            DatabaseHandler.studentLastName,
+            DatabaseHandler.studentId,
+            DatabaseHandler.yearstarted,
+            DatabaseHandler.course
+        )
+
+        var databaseHandler:DatabaseHandler = DatabaseHandler(context)
+        val db = databaseHandler.readableDatabase
+
+        var cursor: Cursor? = null
+
+        try{
+            cursor = db.query(DatabaseHandler.tableStudents,
+                columns,
+                "${DatabaseHandler.studentFirstName} = ? and ${DatabaseHandler.studentLastName} = ?",
+                arrayOf(firstName, lastName),
+                null,
+                null,
+                DatabaseHandler.studentLastName
+            )
+        }catch (e:SQLiteException){
+            db.close()
+            return ArrayList()
+        }
+
+        val student = Student()
+        if(cursor.moveToFirst()) {
+            do {
+                student.firstName = cursor.getString(0)
+                student.lastName = cursor.getString(1)
+                student.id = cursor.getInt(2)
+                studentList.add(student)
+            }while(cursor.moveToNext())
+        }
+        cursor?.close()
+        db.close()
+        return studentList
+    }
+
 }
