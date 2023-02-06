@@ -12,6 +12,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Rect
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.AttributeSet
@@ -20,11 +21,13 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.res.ResourcesCompat
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.IOException
 import java.util.*
 import kotlin.math.ceil
 
@@ -136,9 +139,9 @@ class TouchEventView (context: Context, attrs: AttributeSet): AppCompatImageView
         invalidate()
     }
 
-    fun loadImage(uri: Uri){
-//        var newBitmap.Bitmap? = null
-    }
+//    fun loadImage(uri: Uri){
+////        var newBitmap.Bitmap? = null
+//    }
 
     fun saveImage(){
 
@@ -163,14 +166,70 @@ class TouchEventView (context: Context, attrs: AttributeSet): AppCompatImageView
         }
     }
 
-    fun saveImageByMediaStore(name:String){
+//    fun saveImageByMediaStore(name:String){
+//        val values = ContentValues().apply {
+//            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+//            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+//            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
+//        }
+//    }
+
+    fun loadImage(uri: Uri){
+        var newBitmap:Bitmap? = null
+
+        val bmpFactoryOptions = BitmapFactory.Options()
+        bmpFactoryOptions.inJustDecodeBounds = true
+
+        val widthRatio =
+            ceil((bmpFactoryOptions.outWidth / viewWidth).toDouble()).toInt()
+        val heightRatio =
+            ceil((bmpFactoryOptions.outHeight / viewHeight).toDouble()).toInt()
+        if (heightRatio > widthRatio) {
+            bmpFactoryOptions.inSampleSize = heightRatio
+        } else {
+            bmpFactoryOptions.inSampleSize = widthRatio
+        }
+        bmpFactoryOptions.inJustDecodeBounds = false
+        newBitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri),
+            null, bmpFactoryOptions)
+
+        path.reset()
+
+        extraBitmap = createBitmap(viewWidth, viewHeight, Bitmap.Config.ARGB_8888)
+        extraCanvas = Canvas(extraBitmap)
+        extraCanvas.drawBitmap(newBitmap!!, 0f,0f, paint)
+        invalidate()
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun saveImageByMediaStore(name:String) {
         val values = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
             put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
         }
+
+        val resolver = context.contentResolver
+        var uri: Uri? = null
+
+        try {
+            uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                ?: throw IOException("Failed to create new MediaStore record.")
+
+            resolver.openOutputStream(uri)?.use {
+                if (!extraBitmap.compress(CompressFormat.JPEG, 95, it))
+                    throw IOException("Failed to save bitmap.")
+            } ?: throw IOException("Failed to open output stream.")
+            // added code
+            Log.i("FILES","Saving : ${uri.toString()}")
+
+        } catch (e: IOException) {
+            uri?.let { orphanUri ->
+                resolver.delete(orphanUri, null, null)
+            }
+            e.printStackTrace()
+        }
     }
-
-
 
 }

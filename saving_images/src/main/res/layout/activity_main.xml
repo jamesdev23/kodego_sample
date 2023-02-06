@@ -23,7 +23,7 @@
 
     <Button
         android:id="@+id/btn_save"
-        android:layout_width="140dp"
+        android:layout_width="0dp"
         android:layout_height="48dp"
         android:text="Save"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -33,11 +33,12 @@
 
     <Button
         android:id="@+id/btn_open"
-        android:layout_width="135dp"
+        android:layout_width="0dp"
         android:layout_height="48dp"
         android:text="Open"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_camera"
+        app:layout_constraintStart_toEndOf="@id/btn_save"
         />
     
     <Button
@@ -46,6 +47,7 @@
         android:layout_height="48dp"
         android:text="Camera"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/btn_open"
         />
 
