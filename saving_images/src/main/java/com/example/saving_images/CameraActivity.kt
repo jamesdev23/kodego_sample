@@ -45,7 +45,9 @@ class CameraActivity : AppCompatActivity() {
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
-                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSION)
+                this,
+                REQUIRED_PERMISSIONS,
+                REQUEST_CODE_PERMISSION)
         }
 
         binding.imageCaptureButton.setOnClickListener { takePhoto() }
@@ -114,6 +116,9 @@ class CameraActivity : AppCompatActivity() {
             }
         }
 
+
+
+
         val mediaStoreOutputOptions = MediaStoreOutputOptions
             .Builder(contentResolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
             .setContentValues(contentValues)
@@ -170,7 +175,7 @@ class CameraActivity : AppCompatActivity() {
                     it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
                 }
 
-            imageCapture = ImageCapture.Builder().build()
+//            imageCapture = ImageCapture.Builder().build()
 //
 //            val imageAnalyzer = ImageAnalysis.Builder()
 //                .build()
@@ -192,13 +197,13 @@ class CameraActivity : AppCompatActivity() {
                 cameraProvider.unbindAll()
 
 //                camera
-                cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture)
+//                cameraProvider.bindToLifecycle(
+//                    this, cameraSelector, preview, imageCapture)
 //                cameraProvider.bindToLifecycle(
 //                    this, cameraSelector, preview, imageCapture, imageAnalyzer)
 
 //                video
-//                cameraProvider.bindToLifecycle(this, cameraSelector, preview, videoCapture)
+                cameraProvider.bindToLifecycle(this, cameraSelector, preview, videoCapture)
             } catch(exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
             }
