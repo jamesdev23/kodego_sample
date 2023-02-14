@@ -125,9 +125,9 @@ class TouchEventView (context: Context, attrs: AttributeSet): AppCompatImageView
             ceil((bmpFactoryOption.outWidth / viewWidth).toDouble()).toInt()
         val heightRatio =
             ceil((bmpFactoryOption.outHeight / viewHeight).toDouble()).toInt()
-        if (heightRatio > widthRatio){
+        if (heightRatio > widthRatio) {
             bmpFactoryOption.inSampleSize = heightRatio
-        }else{
+        } else{
             bmpFactoryOption.inSampleSize = widthRatio
         }
         bmpFactoryOption.inJustDecodeBounds = false

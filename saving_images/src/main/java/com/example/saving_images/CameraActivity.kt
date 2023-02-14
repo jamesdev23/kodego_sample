@@ -8,12 +8,10 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.*
+import androidx.camera.video.VideoCapture
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
@@ -124,7 +122,7 @@ class CameraActivity : AppCompatActivity() {
             .prepareRecording(this, mediaStoreOutputOptions)
             .apply {
                 if (PermissionChecker.checkSelfPermission(this@CameraActivity
-                        ,Manifest.permission.RECORD_AUDIO) ==
+                        , android.Manifest.permission.RECORD_AUDIO) ==
                     PermissionChecker.PERMISSION_GRANTED)
                 {
                     withAudioEnabled()
@@ -163,9 +161,50 @@ class CameraActivity : AppCompatActivity() {
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
-        cameraProviderFuture.addListener({})
-    }
+        cameraProviderFuture.addListener({
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
+            val preview = Preview.Builder()
+                .build()
+                .also {
+                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+                }
+
+            imageCapture = ImageCapture.Builder().build()
+//
+//            val imageAnalyzer = ImageAnalysis.Builder()
+//                .build()
+//                .also {
+//                    it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
+//                        Log.d(TAG, "Average luminosity: $luma")
+//                    })
+//                }
+
+            val recorder = Recorder.Builder()
+                .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
+                .build()
+            videoCapture = VideoCapture.withOutput(recorder)
+
+
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+            try {
+                cameraProvider.unbindAll()
+
+//                camera
+                cameraProvider.bindToLifecycle(
+                    this, cameraSelector, preview, imageCapture)
+//                cameraProvider.bindToLifecycle(
+//                    this, cameraSelector, preview, imageCapture, imageAnalyzer)
+
+//                video
+//                cameraProvider.bindToLifecycle(this, cameraSelector, preview, videoCapture)
+            } catch(exc: Exception) {
+                Log.e(TAG, "Use case binding failed", exc)
+            }
+
+        }, ContextCompat.getMainExecutor(this))
+    }
 
     private fun allPermissionGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
@@ -210,7 +249,10 @@ class CameraActivity : AppCompatActivity() {
     private class LuminosityAnalyzer(private val listener: LumaListener) : ImageAnalysis.Analyzer {
 
         private fun ByteBuffer.toByteArray(): ByteArray {
-
+            rewind()
+            val data = ByteArray(remaining())
+            get(data)
+            return data
         }
 
         override fun analyze(image: ImageProxy){
@@ -234,11 +276,11 @@ class CameraActivity : AppCompatActivity() {
         private const val REQUEST_CODE_PERMISSION = 10
         private val REQUIRED_PERMISSIONS =
             mutableListOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO
+                android.Manifest.permission.CAMERA,
+                android.Manifest.permission.RECORD_AUDIO
             ).apply {
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-                    add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
             }.toTypedArray()
     }
