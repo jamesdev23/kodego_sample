@@ -2,6 +2,9 @@ package com.example.saving_images
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
+import android.database.SQLException
+import android.database.sqlite.SQLiteException
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat
 import android.graphics.Bitmap.createBitmap
@@ -24,6 +27,8 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.res.ResourcesCompat
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -202,33 +207,114 @@ class TouchEventView (context: Context, attrs: AttributeSet): AppCompatImageView
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
-    fun saveImageByMediaStore(name:String) {
+//    fun saveImageByMediaStore(name:String) {
+//        val values = ContentValues().apply {
+//            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+//            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+//            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
+//        }
+//
+//        val resolver = context.contentResolver
+//        var uri: Uri? = null
+//
+//        try {
+//            uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+//                ?: throw IOException("Failed to create new MediaStore record.")
+//
+//            resolver.openOutputStream(uri)?.use {
+//                if (!extraBitmap.compress(CompressFormat.JPEG, 95, it))
+//                    throw IOException("Failed to save bitmap.")
+//            } ?: throw IOException("Failed to open output stream.")
+//            // added code
+//            Log.i("FILES","Saving : ${uri.toString()}")
+//
+//        } catch (e: IOException) {
+//            uri?.let { orphanUri ->
+//                resolver.delete(orphanUri, null, null)
+//            }
+//            e.printStackTrace()
+//        }
+//    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun saveImageByDatabase(name:String) {
+        val stream = ByteArrayOutputStream()
+        extraBitmap.compress(CompressFormat.JPEG, 95, stream)
+        val bytes = stream.toByteArray()
+        var data = Base64.getEncoder().encodeToString(bytes)
+//        var data = Base64.encodeToString(bytes, Base64.NO_WRAP)
+
         val values = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
+            put(DatabaseHandler.TABLE_IMAGES_TEXT_NAME, name)
+            put(DatabaseHandler.TABLE_IMAGES_TEXT_DATA, data)
         }
 
-        val resolver = context.contentResolver
-        var uri: Uri? = null
+        var databaseHandler:DatabaseHandler = DatabaseHandler(context)
+        val db = databaseHandler.writableDatabase
 
-        try {
-            uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-                ?: throw IOException("Failed to create new MediaStore record.")
+        val success = db.insert(DatabaseHandler.TABLE_IMAGES_TEXT, null, values)
+        db.close()
+    }
 
-            resolver.openOutputStream(uri)?.use {
-                if (!extraBitmap.compress(CompressFormat.JPEG, 95, it))
-                    throw IOException("Failed to save bitmap.")
-            } ?: throw IOException("Failed to open output stream.")
-            // added code
-            Log.i("FILES","Saving : ${uri.toString()}")
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun loadImageInDatabase(name: String){
+        var imageData: String = ""
 
-        } catch (e: IOException) {
-            uri?.let { orphanUri ->
-                resolver.delete(orphanUri, null, null)
+        val columns = arrayOf(DatabaseHandler.TABLE_IMAGES_TEXT_DATA,
+            DatabaseHandler.TABLE_IMAGES_TEXT_NAME,
+            DatabaseHandler.TABLE_IMAGES_TEXT_ID)
+
+        var databaseHandler:DatabaseHandler = DatabaseHandler(context)
+        val db = databaseHandler.readableDatabase
+        var cursor: Cursor? = null
+
+        try{
+            cursor = db.query(DatabaseHandler.TABLE_IMAGES_TEXT,
+                columns,
+                "${DatabaseHandler.TABLE_IMAGES_TEXT_NAME} like '%${name}%'",
+            null,
+            null,
+            null,
+            null
+            )
+        } catch (e: SQLiteException) {
+            db.close()
+        }
+
+        if (cursor!!.moveToFirst()) {
+            do {
+                imageData = cursor.getString(0)
+            }while(cursor!!.moveToNext())
+        }
+
+        if(imageData.isNotEmpty()) {
+            var imageByte = Base64.getDecoder()!!.decode(imageData)
+            var newBitmap:Bitmap? = null
+
+            val bmpFactoryOptions = BitmapFactory.Options()
+            bmpFactoryOptions.inJustDecodeBounds = true
+
+            val widthRatio =
+                ceil((bmpFactoryOptions.outWidth / viewWidth).toDouble()).toInt()
+            val heightRatio =
+                ceil((bmpFactoryOptions.outHeight / viewHeight).toDouble()).toInt()
+            if (heightRatio > widthRatio) {
+                bmpFactoryOptions.inSampleSize = heightRatio
+            } else {
+                bmpFactoryOptions.inSampleSize = widthRatio
             }
-            e.printStackTrace()
+            bmpFactoryOptions.inJustDecodeBounds = false
+
+            var byteArrayInputStream = ByteArrayInputStream(imageByte)
+            newBitmap = BitmapFactory.decodeStream(byteArrayInputStream, null, bmpFactoryOptions)
+
+            path.reset()
+
+            extraBitmap = createBitmap(newBitmap!!.width, newBitmap.height, Bitmap.Config.ARGB_8888)
+            extraCanvas = Canvas(extraBitmap)
+            extraCanvas.drawBitmap(newBitmap!!, 0f,0f, paint)
+            invalidate()
         }
     }
 

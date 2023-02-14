@@ -19,23 +19,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var drawingBoard: TouchEventView
 
-    //    private val pictureChosen = registerForActivityResult(
-//        ActivityResultContracts.StartActivityForResult()
-//    ) { result ->
-//        if(result.resultCode == Activity.RESULT_CANCELED){
-//            toast("Cancelled choosing Image")
-//        }else{
-//            val data = result.data
-//            if(data == null){
-//                toast("No image was chosen")
-//            }else{
-//                val imageFileUri = result.data!!.data!!
-//                drawingBoard.loadImage(imageFileUri)
-//                Log.i("FILE","URI : ${imageFileUri}")
-//            }
-//        }
-//    }
-
     // async code #3 start
     private val pictureChosen = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -65,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         drawingBoard = findViewById<TouchEventView>(R.id.drawing_pad)
         binding.btnSave.setOnClickListener{
 //            drawingBoard.saveImage()
-            drawingBoard.saveImageByMediaStore("sample")
+            drawingBoard.saveImageByDatabase("sample")
         }
 
         binding.btnOpen.setOnClickListener{
