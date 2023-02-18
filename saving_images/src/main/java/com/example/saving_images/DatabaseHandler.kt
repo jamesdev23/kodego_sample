@@ -14,7 +14,7 @@ class DatabaseHandler (context: Context) : SQLiteOpenHelper(context,DATABASENAME
         val TABLE_IMAGES_ID = "id"
         val TABLE_IMAGES_DATA = "data"
 
-        val TABLE_IMAGES_TEXT = "table_images"
+        val TABLE_IMAGES_TEXT = "table_images_text"
         val TABLE_IMAGES_TEXT_ID = "id"
         val TABLE_IMAGES_TEXT_NAME = "name"
         val TABLE_IMAGES_TEXT_DATA = "data"

@@ -243,7 +243,8 @@ class TouchEventView (context: Context, attrs: AttributeSet): AppCompatImageView
         extraBitmap.compress(CompressFormat.JPEG, 95, stream)
         val bytes = stream.toByteArray()
         var data = Base64.getEncoder().encodeToString(bytes)
-//        var data = Base64.encodeToString(bytes, Base64.NO_WRAP)
+        Log.i("data",data)
+
 
         val values = ContentValues().apply {
             put(DatabaseHandler.TABLE_IMAGES_TEXT_NAME, name)
@@ -287,9 +288,12 @@ class TouchEventView (context: Context, attrs: AttributeSet): AppCompatImageView
                 imageData = cursor.getString(0)
             }while(cursor!!.moveToNext())
         }
+        cursor.close()
+
 
         if(imageData.isNotEmpty()) {
-            var imageByte = Base64.getDecoder()!!.decode(imageData)
+            val imageByte = Base64.getDecoder()!!.decode(imageData)
+            Log.i("imageByte",imageByte.toString())
             var newBitmap:Bitmap? = null
 
             val bmpFactoryOptions = BitmapFactory.Options()
@@ -306,7 +310,7 @@ class TouchEventView (context: Context, attrs: AttributeSet): AppCompatImageView
             }
             bmpFactoryOptions.inJustDecodeBounds = false
 
-            var byteArrayInputStream = ByteArrayInputStream(imageByte)
+            val byteArrayInputStream = ByteArrayInputStream(imageByte)
             newBitmap = BitmapFactory.decodeStream(byteArrayInputStream, null, bmpFactoryOptions)
 
             path.reset()

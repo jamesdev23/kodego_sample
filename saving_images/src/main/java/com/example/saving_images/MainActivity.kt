@@ -52,13 +52,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnOpen.setOnClickListener{
-//            drawingBoard.loadImage()
-            val choosePictureIntent = Intent(
-                Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            )
-            // added this code to use both vals
-            pictureChosen.launch(choosePictureIntent)
+            drawingBoard.loadImageInDatabase("sample")
+//            val choosePictureIntent = Intent(
+//                Intent.ACTION_PICK,
+//                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+//            )
+//            // added this code to use both vals
+//            pictureChosen.launch(choosePictureIntent)
 
         }
 
