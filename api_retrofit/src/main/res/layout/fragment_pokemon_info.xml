@@ -3,12 +3,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PokemonInfoFragment">
+    android:background="@android:color/darker_gray"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/pokemon_id"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:text="POKEMON ID"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/pokemon_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="POKEMON NAME"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/pokemon_height"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="POKEMON HEIGHT"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/pokemon_abilities"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="POKEMON ABILITIES"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
 
 </FrameLayout>
