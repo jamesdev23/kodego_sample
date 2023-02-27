@@ -48,17 +48,18 @@ class MainActivity : AppCompatActivity() {
         drawingBoard = findViewById<TouchEventView>(R.id.drawing_pad)
         binding.btnSave.setOnClickListener{
 //            drawingBoard.saveImage()
-            drawingBoard.saveImageByDatabase("sample")
+//            drawingBoard.saveImageByDatabase("sample")
+            drawingBoard.saveImageByMediaStore("sample")
         }
 
         binding.btnOpen.setOnClickListener{
-            drawingBoard.loadImageInDatabase("sample")
-//            val choosePictureIntent = Intent(
-//                Intent.ACTION_PICK,
-//                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-//            )
-//            // added this code to use both vals
-//            pictureChosen.launch(choosePictureIntent)
+//            drawingBoard.loadImageInDatabase("sample")
+            val choosePictureIntent = Intent(
+                Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            )
+            // added this code to use both vals
+            pictureChosen.launch(choosePictureIntent)
 
         }
 

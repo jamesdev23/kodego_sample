@@ -171,14 +171,6 @@ class TouchEventView (context: Context, attrs: AttributeSet): AppCompatImageView
         }
     }
 
-//    fun saveImageByMediaStore(name:String){
-//        val values = ContentValues().apply {
-//            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-//            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-//            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
-//        }
-//    }
-
     fun loadImage(uri: Uri){
         var newBitmap:Bitmap? = null
 
@@ -207,34 +199,34 @@ class TouchEventView (context: Context, attrs: AttributeSet): AppCompatImageView
 
     }
 
-//    fun saveImageByMediaStore(name:String) {
-//        val values = ContentValues().apply {
-//            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-//            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-//            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
-//        }
-//
-//        val resolver = context.contentResolver
-//        var uri: Uri? = null
-//
-//        try {
-//            uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-//                ?: throw IOException("Failed to create new MediaStore record.")
-//
-//            resolver.openOutputStream(uri)?.use {
-//                if (!extraBitmap.compress(CompressFormat.JPEG, 95, it))
-//                    throw IOException("Failed to save bitmap.")
-//            } ?: throw IOException("Failed to open output stream.")
-//            // added code
-//            Log.i("FILES","Saving : ${uri.toString()}")
-//
-//        } catch (e: IOException) {
-//            uri?.let { orphanUri ->
-//                resolver.delete(orphanUri, null, null)
-//            }
-//            e.printStackTrace()
-//        }
-//    }
+    fun saveImageByMediaStore(name:String) {
+        val values = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
+        }
+
+        val resolver = context.contentResolver
+        var uri: Uri? = null
+
+        try {
+            uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                ?: throw IOException("Failed to create new MediaStore record.")
+
+            resolver.openOutputStream(uri)?.use {
+                if (!extraBitmap.compress(CompressFormat.JPEG, 95, it))
+                    throw IOException("Failed to save bitmap.")
+            } ?: throw IOException("Failed to open output stream.")
+            // added code
+            Log.i("FILES","Saving : ${uri.toString()}")
+
+        } catch (e: IOException) {
+            uri?.let { orphanUri ->
+                resolver.delete(orphanUri, null, null)
+            }
+            e.printStackTrace()
+        }
+    }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -280,6 +272,7 @@ class TouchEventView (context: Context, attrs: AttributeSet): AppCompatImageView
             null
             )
         } catch (e: SQLiteException) {
+            cursor?.close()
             db.close()
         }
 

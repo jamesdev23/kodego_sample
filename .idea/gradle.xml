@@ -12,7 +12,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/android_life_cycle" />
+            <option value="$PROJECT_DIR$/api_retrofit" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/firebasechat" />
             <option value="$PROJECT_DIR$/fragments" />
             <option value="$PROJECT_DIR$/module_3" />
             <option value="$PROJECT_DIR$/saving_images" />
