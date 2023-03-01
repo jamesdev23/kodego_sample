@@ -6,6 +6,12 @@
     android:background="@android:color/darker_gray"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
     <TextView
         android:id="@+id/pokemon_id"
         android:layout_width="match_parent"
@@ -37,6 +43,8 @@
         android:text="POKEMON ABILITIES"
         android:textStyle="bold"
         android:gravity="center"/>
+
+    </LinearLayout>
 
 
 </FrameLayout>

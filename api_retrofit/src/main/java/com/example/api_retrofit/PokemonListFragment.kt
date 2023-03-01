@@ -1,59 +1,67 @@
 package com.example.api_retrofit
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.api_retrofit.adapter.PokemonAdapter
+import com.example.api_retrofit.api.PokemonAPIClient
+import com.example.api_retrofit.databinding.FragmentPokemonListBinding
+import com.example.api_retrofit.models.Pokemon
+import com.example.api_retrofit.models.PokemonListResponse
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [PokemonListFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class PokemonListFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    var pokemonAdapter: PokemonAdapter? = null
+    var pokemonList = ArrayList<Pokemon>()
+    var binding:FragmentPokemonListBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pokemon_list, container, false)
+        binding = FragmentPokemonListBinding.inflate(inflater, container, false)
+        var view = binding!!.root
+
+        pokemonAdapter = PokemonAdapter(requireActivity().applicationContext, pokemonList)
+
+        binding!!.pokemonList.layoutManager = LinearLayoutManager(requireActivity().applicationContext, LinearLayoutManager.VERTICAL, false)
+
+        binding!!.pokemonList.adapter = pokemonAdapter
+
+        getData()
+
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment PokemonListFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            PokemonListFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun getData(){
+        val call: Call<PokemonListResponse> =
+            PokemonAPIClient.getPokemonData.getList(0, 100)
+
+        call.enqueue(object : Callback<PokemonListResponse> {
+            override fun onFailure(call: Call<PokemonListResponse>, t: Throwable) {
+                Log.d("API CALL", "Failed API CALL")
+            }
+
+            override fun onResponse(
+                call: Call<PokemonListResponse>,
+                response: Response<PokemonListResponse>
+            ) {
+                var response: PokemonListResponse = response!!.body()!!
+                pokemonAdapter!!.setList(response.pokemonList)
+
+                var pokelist = response.pokemonList
+                for(pokemon in pokelist) {
+                    Log.d("API CALL", pokemon.name)
                 }
             }
+        })
     }
 }
