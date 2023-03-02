@@ -14,13 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pokedex2021.adapter.PokemonAdapter
 import com.example.pokedex2021.api.PokemonAPIClient
 import com.example.pokedex2021.databinding.FragmentPokemonInfoBinding
-import com.example.pokedex2021.models.PokemonAbility
+import com.example.pokedex2021.databinding.FragmentPokemonMovesBinding
 import com.example.pokedex2021.models.PokemonInfoResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class PokemonInfoFragment : Fragment() {
+class PokemonMovesFragment : Fragment() {
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
 
@@ -36,7 +36,7 @@ class PokemonInfoFragment : Fragment() {
         }
     }
 
-    var binding: FragmentPokemonInfoBinding? = null
+    var binding: FragmentPokemonMovesBinding? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupReceiver()
@@ -46,7 +46,7 @@ class PokemonInfoFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentPokemonInfoBinding.inflate(inflater, container, false)
+        binding = FragmentPokemonMovesBinding.inflate(inflater, container, false)
         var view = binding!!.root
 
         return view
@@ -77,27 +77,9 @@ class PokemonInfoFragment : Fragment() {
             ) {
                 var response: PokemonInfoResponse = response!!.body()!!
 
-
-                Intent().also {
-                    Log.d("Pokemon", "${response.sprites.front_default}")
-                    it.setAction("ph.kodego.md2p.LOADIMAGEACTION")
-                    it.putExtra("data", response.sprites.front_default)
-                    context!!.sendBroadcast(it)
-                }
-
-                binding!!.pokemonId.text = "POKEMON ID:\n ${response.id.toString()}"
-                binding!!.pokemonName.text = "POKEMON NAME:\n ${response.name}"
-                binding!!.pokemonHeight.text = "POKEMON HEIGHT:\n ${response.height.toString()}"
-
-
                 var pokemonAbilities = response.abilities
-                var pokemonMoves: String = ""
-                for (pokemonAbility in pokemonAbilities) {
-                    pokemonMoves += pokemonAbility.ability.name + "\n"
-                }
-
-                binding!!.pokemonAbilities.text = "POKEMON ABILITIES:\n $pokemonMoves"
-
+                var firstMove = pokemonAbilities[0].ability.name
+                binding!!.pokemonMove.text = "POKEMON MOVE:\n $firstMove"
 
                 Log.d("API INFO CALL", response.name)
             }
