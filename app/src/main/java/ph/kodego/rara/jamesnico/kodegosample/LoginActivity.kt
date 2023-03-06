@@ -28,7 +28,7 @@ class LoginActivity : AppCompatActivity() {
             //Snackbar.make(binding.root, "$username - $password", Snackbar.LENGTH_SHORT).show()
             //Toast.makeTest(applicationContext, "Toast Submit", Toast.LENGTH_SHORT).show()
 
-            var goToHome = Intent(this, HomeActivity::class.java)
+            var goToHome = Intent(this, RegisterActivity::class.java)
 
 
             val bundle = Bundle()

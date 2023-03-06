@@ -13,12 +13,13 @@
 
 
         <TextView
-            android:id="@+id/pokemon_move"
+            android:id="@+id/pokemon_moves"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="POKEMON MOVE"
+            android:text="POKEMON MOVEs"
             android:textStyle="bold"
-            android:gravity="center"/>
+            android:gravity="center"
+            />
 
 
     </LinearLayout>

@@ -10,11 +10,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.pokedex2021.adapter.PokemonAdapter
 import com.example.pokedex2021.api.PokemonAPIClient
 import com.example.pokedex2021.databinding.FragmentPokemonInfoBinding
-import com.example.pokedex2021.models.PokemonAbility
 import com.example.pokedex2021.models.PokemonInfoResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -85,22 +82,33 @@ class PokemonInfoFragment : Fragment() {
                     context!!.sendBroadcast(it)
                 }
 
-                binding!!.pokemonId.text = "POKEMON ID:\n ${response.id.toString()}"
-                binding!!.pokemonName.text = "POKEMON NAME:\n ${response.name}"
-                binding!!.pokemonHeight.text = "POKEMON HEIGHT:\n ${response.height.toString()}"
-
-
-                var pokemonAbilities = response.abilities
-                var pokemonMoves: String = ""
-                for (pokemonAbility in pokemonAbilities) {
-                    pokemonMoves += pokemonAbility.ability.name + "\n"
-                }
-
-                binding!!.pokemonAbilities.text = "POKEMON ABILITIES:\n $pokemonMoves"
-
+                getPokemonInfos(response)
 
                 Log.d("API INFO CALL", response.name)
             }
         })
+    }
+
+    private fun getPokemonInfos(response: PokemonInfoResponse){
+        var pokemonTypes = response.types
+        var pokemonTypeList: String = ""
+        var pokemonAbilities = response.abilities
+        var pokemonAbilityList: String = ""
+
+        binding!!.pokemonId.text = "POKEMON ID:\n ${response.id}"
+        binding!!.pokemonName.text = "POKEMON NAME:\n ${response.name}"
+        binding!!.pokemonHeight.text = "POKEMON HEIGHT:\n ${response.height}"
+        binding!!.pokemonWeight.text = "POKEMON WEIGHT:\n ${response.weight}"
+
+
+        for (pokemonType in pokemonTypes) {
+            pokemonTypeList += pokemonType.type.name + "\n"
+        }
+        binding!!.pokemonType.text = "POKEMON TYPE/S:\n $pokemonTypeList"
+
+        for (pokemonAbility in pokemonAbilities) {
+            pokemonAbilityList += pokemonAbility.ability.name + ","
+        }
+        binding!!.pokemonAbilities.text = "POKEMON ABILITIES:\n $pokemonAbilityList"
     }
 }

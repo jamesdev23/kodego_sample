@@ -15,6 +15,7 @@ import com.example.pokedex2021.adapter.PokemonAdapter
 import com.example.pokedex2021.api.PokemonAPIClient
 import com.example.pokedex2021.databinding.FragmentPokemonInfoBinding
 import com.example.pokedex2021.databinding.FragmentPokemonMovesBinding
+import com.example.pokedex2021.models.PokemonAbility
 import com.example.pokedex2021.models.PokemonInfoResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -77,12 +78,21 @@ class PokemonMovesFragment : Fragment() {
             ) {
                 var response: PokemonInfoResponse = response!!.body()!!
 
-                var pokemonAbilities = response.abilities
-                var firstMove = pokemonAbilities[0].ability.name
-                binding!!.pokemonMove.text = "POKEMON MOVE:\n $firstMove"
+                getPokemonMoves(response)
 
                 Log.d("API INFO CALL", response.name)
             }
         })
+    }
+
+    private fun getPokemonMoves(response: PokemonInfoResponse) {
+        var pokemonMoves = response.moves
+        var pokemonMoveList:String = ""
+
+        for(pokemonMove in pokemonMoves){
+            pokemonMoveList += pokemonMove.move.name + ", "
+        }
+
+        binding!!.pokemonMoves.text = "POKEMON MOVE:\n $pokemonMoveList"
     }
 }

@@ -12,37 +12,53 @@
         android:orientation="vertical">
 
 
-    <TextView
-        android:id="@+id/pokemon_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="POKEMON ID"
-        android:textStyle="bold"
-        android:gravity="center"/>
+        <TextView
+            android:id="@+id/pokemon_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="POKEMON ID"
+            android:textStyle="bold"
+            android:gravity="center"/>
 
-    <TextView
-        android:id="@+id/pokemon_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="POKEMON NAME"
-        android:textStyle="bold"
-        android:gravity="center"/>
+        <TextView
+            android:id="@+id/pokemon_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="POKEMON NAME"
+            android:textStyle="bold"
+            android:gravity="center"/>
 
-    <TextView
-        android:id="@+id/pokemon_height"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="POKEMON HEIGHT"
-        android:textStyle="bold"
-        android:gravity="center"/>
+        <TextView
+            android:id="@+id/pokemon_height"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="POKEMON HEIGHT"
+            android:textStyle="bold"
+            android:gravity="center"/>
 
-    <TextView
-        android:id="@+id/pokemon_abilities"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="POKEMON ABILITIES"
-        android:textStyle="bold"
-        android:gravity="center"/>
+        <TextView
+            android:id="@+id/pokemon_weight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="POKEMON WEIGHT"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/pokemon_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="POKEMON TYPE/S"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/pokemon_abilities"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="POKEMON ABILITIES"
+            android:textStyle="bold"
+            android:gravity="center"/>
 
     </LinearLayout>
 
