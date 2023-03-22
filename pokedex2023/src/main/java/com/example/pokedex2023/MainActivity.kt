@@ -21,6 +21,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        supportActionBar?.title = "Pokedex 2023"
+
         supportFragmentManager
             .beginTransaction()
             .add(R.id.fragment_holder, pokemonListFragment)
