@@ -45,11 +45,8 @@ class PokemonListFragment : Fragment() {
 
         binding!!.btnBack.setOnClickListener {
             pokemonList.clear()
-            limit = maxOf(binding!!.editPokemonCount.text.toString().toInt(), 0)
+            limit = binding!!.editPokemonCount.text.toString().toInt()
             Log.i("pokemon list limit",limit.toString())
-            if(limit == 0){
-                limitNotice()
-            }
 
             // returns the greater value of two. else, sets startIndex to 0
             startIndex = maxOf(startIndex - offset, 0)
@@ -60,13 +57,10 @@ class PokemonListFragment : Fragment() {
 
         binding!!.btnNext.setOnClickListener {
             pokemonList.clear()
-            limit = minOf(binding!!.editPokemonCount.text.toString().toInt(), 0)
-            if(limit == 0){
-                limitNotice()
-            }
+            limit = binding!!.editPokemonCount.text.toString().toInt()
 
-            // returns the lesser value of two. else, sets startIndex to difference of maxPokemonCount and offset
-            startIndex = minOf(startIndex + offset, maxPokemonCount - offset)
+//            // returns the lesser value of two. else, sets startIndex to difference of maxPokemonCount and offset
+//            startIndex = minOf(startIndex + offset, maxPokemonCount - offset)
 
             getData(startIndex,limit)
         }
