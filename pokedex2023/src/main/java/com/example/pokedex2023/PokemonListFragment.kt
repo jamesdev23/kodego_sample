@@ -48,7 +48,7 @@ class PokemonListFragment : Fragment() {
             limit = binding!!.editPokemonCount.text.toString().toInt()
             Log.i("pokemon list limit",limit.toString())
 
-            // returns the greater value of two. else, sets startIndex to 0
+            // avoids bug where the list goes straight to the end after multiple back button press
             startIndex = maxOf(startIndex - offset, 0)
             Log.i("pokemon list start index",startIndex.toString())
 
@@ -59,8 +59,8 @@ class PokemonListFragment : Fragment() {
             pokemonList.clear()
             limit = binding!!.editPokemonCount.text.toString().toInt()
 
-//            // returns the lesser value of two. else, sets startIndex to difference of maxPokemonCount and offset
-//            startIndex = minOf(startIndex + offset, maxPokemonCount - offset)
+            // avoids bug where the list goes back from the start after multiple next button press
+            startIndex = minOf(startIndex + offset, maxPokemonCount)
 
             getData(startIndex,limit)
         }
