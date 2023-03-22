@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/purple_200"
+    tools:context=".PokemonImageFragment"
+    android:orientation="horizontal"
+    android:gravity="center_vertical|center_horizontal">
+
+    <ImageView
+        android:id="@+id/pokemon_image"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/egg"
+        android:contentDescription="POKEMON PICTURE"
+        android:layout_weight="5"
+        />
+
+    <ImageView
+        android:id="@+id/pokemon_image_shiny"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/egg"
+        android:contentDescription="POKEMON PICTURE SHINY"
+        android:layout_weight="5"
+        />
+
+</LinearLayout>
